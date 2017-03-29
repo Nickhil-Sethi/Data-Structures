@@ -1,6 +1,5 @@
 import numpy as np
 
-from tree.heap import MinHeap
 from tree.binary_tree import AVLTree
 
 from collections import OrderedDict, deque
