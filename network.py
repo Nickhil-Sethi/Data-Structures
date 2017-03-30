@@ -1,9 +1,9 @@
+"""implementation of a directed weighted graph object"""
+
 import numpy as np
 
 from tree.binary_tree import AVLTree
-
 from collections import OrderedDict, deque
-from heapq import heap
 
 class AdjacencySet(AVLTree):
     def __init__(self):
@@ -22,16 +22,16 @@ class Node(object):
         self.index         = index
         self.value         = value
         self.adjacency_set = AdjacencySet()
-        self.explored      = False
 
     def connect(self,newNode,weight=None):
         self.adjacency_set.insert(newNode.index,(newNode,weight))
 
     def weight(self,index):
-        s = self.adjacency_set.search(index)
-        if s:
+        try:
+            s = self.adjacency_set.search(index)
             return s.value[1]
-        return None
+        except KeyError:
+            return None
 
     def __repr__(self):
         return "Graph Node {}".format(self.index)
@@ -39,12 +39,37 @@ class Node(object):
 class DirectedGraph(object):
     def __init__(self,init_size):
         self.nodes         = OrderedDict([(i,Node(i)) for i in xrange(init_size)])
+        self.N             = len(self.nodes)
 
     def connect(self,i,j,weight=1.):
+        if weight < 0.:
+            raise ValueError('weights must be non-negative')
         self.nodes[i].connect(self.nodes[j],weight)
 
     def weight(self,i,j):
         return self.nodes[i].weight(j)
+
+    def BFS(self,s):
+        explored = set()
+        queue    = deque([s])
+        while queue:
+            current = queue.pop()
+            if current not in explored:
+                explored.add(current)
+                for child in current.adjacency_set:
+                    queue.appendleft(child)
+        return explored
+
+    def DFS(self,s):
+        explored = set()
+        stack    = []
+        while queue:
+            current = stack.pop()
+            if current not in explored:
+                explored.add(current)
+                for child in current.adjacency_set:
+                    stack.append(child)
+        return explored
 
     def Dijsktras(self,s):
         S           = OrderedDict([(s,(0.,None))])
@@ -67,26 +92,26 @@ class DirectedGraph(object):
                 S[closest] = (dist,prev)
         return S
 
-    # implements dijkstras with a priority queue
-    def Dijsktras_Efficient(self,s):
-        nodes       = OrderedDict([(node, (float("infinity"),None) for node in self.nodes)])
-        nodes[s]    = (0.,None)
-        heapq.heapify(nodes)
-        while nodes:
-            u = heapq.heappop(nodes)
-            for v in self.nodes[u].adjacency_set:
-                if dist[v] > dist[u] + self.weight(u,v):
-                    dist[v] = dist[u] + self.weight(u,v)
-                    heapq.heappush(pq,v)
+    def relax(self,v,dist):
+        m = min([float("infinity") if self.weight(v,w) is  None else dist[w] + self.weight(v,w) for w in dist])
+        return min(dist[v],m)
 
     def Bellman_Ford(self,s,t):
-        pass
-
+        dist           = [None for i in xrange(self.N-1)]
+        dist[0]        = OrderedDict([(v,float("infinity")) for v in self.nodes])
+        dist[0][t]     = 0.
+        for i in xrange(1,self.N-1):
+            dist[i]    = OrderedDict([(v,float("infinity")) for v in self.nodes])
+            dist[i][t] = 0.
+            for v in self.nodes:
+                dist[i][v] = self.relax(v,dist[i-1])
+        return dist
 
 if __name__=='__main__':
-    G = DirectedGraph(100)
+    G = DirectedGraph(20)
     for n in G.nodes:
         for m in G.nodes:
             if m != n:
                 G.connect(n,m,np.random.rand())
-    print G.Dijsktras(2)
+    p = G.Bellman_Ford(2,6)
+    print p[-1]

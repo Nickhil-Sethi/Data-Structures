@@ -398,7 +398,6 @@ class AVLTree(object):
 		else:
 			raise KeyError('key {} not in AVLTree'.format(key))
 
-
 	def inOrder(self):
 		if not self.root:
 			return []
@@ -414,7 +413,7 @@ if __name__=='__main__':
 
 	import numpy as np
 
-	test_AVL = True
+	test_AVL = False
 	if test_AVL:
 		T = AVLTree()
 		T.insert(5)
