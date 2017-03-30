@@ -50,25 +50,25 @@ class DirectedGraph(object):
         return self.nodes[i].weight(j)
 
     def BFS(self,s):
-        explored = set()
-        queue    = deque([s])
+        explored = OrderedDict()
+        queue    = deque([self.nodes[s]])
         while queue:
             current = queue.pop()
             if current not in explored:
-                explored.add(current)
+                explored[current] = None
                 for child in current.adjacency_set:
-                    queue.appendleft(child)
+                    queue.appendleft(child[0])
         return explored
 
     def DFS(self,s):
-        explored = set()
-        stack    = []
-        while queue:
+        explored = OrderedDict()
+        stack    = [self.nodes[s]]
+        while stack:
             current = stack.pop()
             if current not in explored:
-                explored.add(current)
+                explored[current] = None
                 for child in current.adjacency_set:
-                    stack.append(child)
+                    stack.append(child[0])
         return explored
 
     def Dijsktras(self,s):
@@ -113,5 +113,4 @@ if __name__=='__main__':
         for m in G.nodes:
             if m != n:
                 G.connect(n,m,np.random.rand())
-    p = G.Bellman_Ford(2,6)
-    print p[-1]
+    print G.BFS(1)
