@@ -107,10 +107,14 @@ class DirectedGraph(object):
                 dist[i][v] = self.relax(v,dist[i-1])
         return dist
 
-if __name__=='__main__':
-    G = DirectedGraph(20)
+def initialize_graph(size):
+    G = DirectedGraph(size)
     for n in G.nodes:
         for m in G.nodes:
             if m != n:
                 G.connect(n,m,np.random.rand())
+    return G
+
+if __name__=='__main__':
+    G = initialize_graph(20)
     print G.BFS(1)
