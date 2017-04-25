@@ -6,6 +6,7 @@ from tree.binary_tree import AVLTree
 from collections import OrderedDict, deque
 
 class AdjacencySet(AVLTree):
+    """AdjacencySet set object for graph node. Implemented by AVLTree"""
     def __init__(self):
         AVLTree.__init__(self)
 

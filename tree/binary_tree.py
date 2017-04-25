@@ -1,57 +1,63 @@
 """Implements binary search tree object for unique keys"""
 class binaryNode(object):
 	def __init__(self,key,value=None):
-		self.key 					= key
-		self.value 					= value
-		self.left 					= None
-		self.right 					= None
-		self.parent					= None
-		self.size 					= 1
+		self.key    = key
+		self.value  = value
+		self.left   = None
+		self.right  = None
+		self.parent	= None
+		self.size   = 1
 
 	def min_right(self):
-		prev 						= None
-		current 					= self.right
+		"""Returns minimum element from right subtree. 
+		Returns None if right subtree does not exist."""
+		prev = None
+		current = self.right
 		while current:
-			prev 					= current
-			current 				= current.left
+			prev = current
+			current = current.left
 		return prev
 
 	def is_right(self):
+		"""Returns True if self is the right child of another node."""
 		return (self.parent is not None and self.parent.key < self.key)
 
 	def set_left(self,node):
+		"""Sets node to self.left, and self to node.parent."""
 		if node is None:
 			if self.left is not None:
-				self.left.parent 	= None
-			self.left 				= None
+				self.left.parent = None
+			self.left = None
 			return
-		self.left 					= node
-		node.parent 				= self
+		self.left = node
+		node.parent = self
 
 	def set_right(self,node):
+		"""Sets node to self.right and self to node.parent."""
 		if node is None:
 			if self.right is not None:
-				self.right.parent 	= None
-			self.right 				= None
+				self.right.parent = None
+			self.right = None
 			return
-		self.right  				= node
-		node.parent 				= self
+		self.right = node
+		node.parent = self
 
 	def insert(self,key,value=None):
+		"""Creates node(key,value) and inserts into subtree of self."""
 		if key is None:
-			newNode 				= None
+			newNode = None
 		else:
-			newNode 				= binaryNode(key,value)
-		current 					= self
+			newNode = binaryNode(key,value)
+		current = self
 		while current:
 			if current.key == key:
-				current.value 		= value
+				current.value = value
 				return
-			prev 					= current
+			prev = current
 			if current.key < key:
-				current 			= current.right
+				current = current.right
 			else:
-				current 			= current.left
+				current = current.left
 		if prev.key < key:
 			prev.set_right(newNode)
 		else:
@@ -59,17 +65,19 @@ class binaryNode(object):
 		self.size += 1
 
 	def search(self,key):
-		prev    					= None
-		current 					= self
+		"""binary search for key in subtree of self"""
+		prev = None
+		current = self
 		while current:
 			if current.key == key:
 				return current
-			prev 					= current
+			prev = current
 			if current.key < key:
-				current 			= current.right
+				current = current.right
 			else:
-				current				= current.left
-		return current
+				current	= current.left
+		# raise an error if not present; more pythonic way of exiting.
+		raise KeyError('key not present in subtree of {}'.format(self))
 
 	def isSorted(self,arr):
 		for i in xrange(len(arr)-1):
@@ -78,12 +86,12 @@ class binaryNode(object):
 		return True
 
 	def inOrder(self):
-		stack 						= [self]
-		ret   						= []
-		current 					= self
+		stack = [self]
+		ret = []
+		current = self
 		while stack:
 			if current.left:
-				current 	= current.left
+				current = current.left
 				stack.append(current)
 			else:
 				while stack:
@@ -96,7 +104,11 @@ class binaryNode(object):
 		return ret
 
 	def delete(self,key):
-		node 							= self.search(key)
+		try:
+			node = self.search(key)
+		except KeyError:
+			return
+
 		if node != None and node != self:
 			self.size -= 1
 			parent = node.parent
@@ -144,10 +156,14 @@ class binaryNode(object):
 			return
 
 	def __contains__(self,key):
-		return (self.search(key) != None)
+		try: 
+			self.search(key)
+			return True
+		except:
+			return False
 
 	def __repr__(self):
-		return "key {}".format(self.key,self.value)
+		return "binary tree node: key {}, value {}".format(self.key,self.value)
 
 class AVLnode(binaryNode):
 	def __init__(self,key,value=None):
