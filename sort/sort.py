@@ -22,7 +22,7 @@ def merge(a: List, b: List) -> List:
 	
 	return mergedList
 
-def merge_halves(
+def merge_inplace(
 		arr: List, 
 		begin: int, 
 		mid: int, 
@@ -69,7 +69,7 @@ def merge_sort(arr: List, begin=None, end=None) -> List:
 	arr = merge_sort(arr, mid+1, end)
 
 	# merge the two halves into another list
-	merge_halves(arr, begin, mid, end)	
+	merge_inplace(arr, begin, mid, end)	
 	return arr
 
 if __name__ == '__main__':
