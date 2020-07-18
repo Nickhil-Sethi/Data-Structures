@@ -1,5 +1,28 @@
 from typing import List
 
+def is_sorted(arr: List) -> bool:
+	c = 0
+	while c < len(arr) - 1:
+		if arr[c] > arr[c+1]:
+			return False
+		c += 1
+	return True
+
+def bubble_sort(arr: List) -> List:
+	swap = True
+	while swap:
+		c = 0
+		swap = False
+		while c < len(arr) - 1:
+			if arr[c] < arr[c+1]:
+				c += 1
+				continue 
+			arr[c], arr[c+1] = \
+				arr[c+1], arr[c]
+			swap = True
+			c += 1
+	return arr
+
 def merge(a: List, b: List) -> List:
 	mergedList = []
 	c = 0
@@ -74,4 +97,4 @@ def merge_sort(arr: List, begin=None, end=None) -> List:
 
 if __name__ == '__main__':
 	s1 = ['z','a','b', 'd', 's', 'e', 'h', 'r']
-	print(merge_sort(s1))
+	assert(is_sorted(bubble_sort(s1)))
